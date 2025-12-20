@@ -1,7 +1,6 @@
 'use client'
 
 import { FC } from 'react'
-import Link from 'next/link'
 import ButtonPrimary from '@/components/Button/ButtonPrimary'
 import ButtonSecondary from '@/components/Button/ButtonSecondary'
 
@@ -13,18 +12,13 @@ interface SectionHeroBrandedProps {
  * Branded Hero Section for Cursed Tours
  * - Atmospheric dark design with ghostly elements
  * - Strong branding and call-to-action
- * - Animated subtle effects
+ * - Tagline: "Where History Haunts"
  */
 const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => {
 	return (
 		<section className={`nc-SectionHeroBranded relative overflow-hidden ${className}`}>
 			{/* Background with gradient and pattern */}
 			<div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950">
-				{/* Animated fog/mist effect */}
-				<div className="absolute inset-0 opacity-30">
-					<div className="absolute inset-0 bg-[url('/images/fog-pattern.png')] bg-cover animate-pulse" />
-				</div>
-				
 				{/* Subtle grid pattern */}
 				<div 
 					className="absolute inset-0 opacity-5"
@@ -43,27 +37,26 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 			{/* Content */}
 			<div className="relative z-10 container mx-auto px-4 py-20 lg:py-32">
 				<div className="max-w-4xl mx-auto text-center">
-					{/* Badge */}
-					<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8">
-						<span className="relative flex h-2 w-2">
-							<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-							<span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-						</span>
-						<span className="text-sm text-neutral-300">Discover the supernatural</span>
-					</div>
-
-					{/* Main Heading */}
-					<h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
-						<span className="block">Explore the World's Most</span>
-						<span className="block bg-gradient-to-r from-red-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-							Haunted Destinations
-						</span>
+					{/* Brand Name */}
+					<h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold text-white mb-4 tracking-tight">
+						Cursed Tours
 					</h1>
+
+					{/* Tagline */}
+					<p className="text-2xl sm:text-3xl lg:text-4xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 mb-8">
+						Where History Haunts
+					</p>
+
+					{/* Divider */}
+					<div className="flex items-center justify-center gap-4 mb-8">
+						<span className="h-px w-12 bg-gradient-to-r from-transparent to-purple-500"></span>
+						<span className="text-purple-400">👻</span>
+						<span className="h-px w-12 bg-gradient-to-l from-transparent to-purple-500"></span>
+					</div>
 
 					{/* Subheading */}
 					<p className="text-lg sm:text-xl text-neutral-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-						Uncover spine-chilling ghost tours, paranormal investigations, and haunted locations. 
-						Your next supernatural adventure awaits.
+						Discover spine-chilling ghost tours, haunted locations, and paranormal experiences in cities around the world.
 					</p>
 
 					{/* CTA Buttons */}
