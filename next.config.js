@@ -215,6 +215,17 @@ const nextConfig = {
 	},
 	async redirects() {
 		return [
+			// Redirect /home to / (SEO - avoid duplicate homepage)
+			{
+				source: '/home/',
+				destination: '/',
+				permanent: true,
+			},
+			{
+				source: '/home',
+				destination: '/',
+				permanent: true,
+			},
 			// Redirect /blog/ to /posts/
 			{
 				source: '/blog/',
