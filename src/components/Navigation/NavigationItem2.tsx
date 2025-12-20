@@ -12,10 +12,8 @@ import Link from 'next/link'
 import NcImage from '../NcImage/NcImage'
 import { useFragment } from '@/__generated__'
 import { NC_PRIMARY_MENU_QUERY_FRAGMENT } from '@/fragments/menu'
-import { getPostDataFromPostFragment } from '@/utils/getPostDataFromPostFragment'
 import ncFormatDate from '@/utils/formatDate'
 import { NavItemType, NavigationItemProps } from './NavigationItem'
-import { NcmazFcPostCardFieldsFragment } from '@/__generated__/graphql'
 
 export interface Props extends NavigationItemProps {}
 
@@ -104,9 +102,16 @@ const NavigationItem2: FC<Props> = ({ menuItem: menuItemProp }) => {
 														<h3 className="sr-only">Recent posts</h3>
 														{menu.ncmazfaustMenu?.posts?.nodes.map((p) => {
 															if (p.__typename !== 'Post') return null
-															const post = getPostDataFromPostFragment(
-																p as NcmazFcPostCardFieldsFragment,
-															)
+															// Use post data directly from menu fragment
+															const post = {
+																databaseId: p.databaseId,
+																title: p.title || '',
+																uri: p.uri || '',
+																date: p.date || '',
+																excerpt: p.excerpt || '',
+																featuredImage: p.featuredImage?.node,
+																categories: p.categories,
+															}
 
 															return (
 																<article

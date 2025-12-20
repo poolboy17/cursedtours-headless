@@ -14,9 +14,7 @@ import { FragmentType, useFragment } from '@/__generated__'
 import { NC_PRIMARY_MENU_QUERY_FRAGMENT } from '@/fragments/menu'
 import {
 	NcPrimaryMenuFieldsFragmentFragment,
-	NcmazFcPostCardFieldsFragment,
 } from '@/__generated__/graphql'
-import { getPostDataFromPostFragment } from '@/utils/getPostDataFromPostFragment'
 import ncFormatDate from '@/utils/formatDate'
 
 export type NavItemType = NcPrimaryMenuFieldsFragmentFragment & {
@@ -115,9 +113,16 @@ const NavigationItem: FC<NavigationItemProps> = ({
 										<h3 className="sr-only">Recent posts</h3>
 										{menu.ncmazfaustMenu?.posts?.nodes.map((p) => {
 											if (p.__typename !== 'Post') return null
-											const post = getPostDataFromPostFragment(
-												p as NcmazFcPostCardFieldsFragment,
-											)
+											// Use post data directly from menu fragment
+											const post = {
+												databaseId: p.databaseId,
+												title: p.title || '',
+												uri: p.uri || '',
+												date: p.date || '',
+												excerpt: p.excerpt || '',
+												featuredImage: p.featuredImage?.node,
+												categories: p.categories,
+											}
 
 											return (
 												<article
