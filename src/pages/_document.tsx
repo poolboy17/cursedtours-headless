@@ -24,6 +24,14 @@ export default class Document extends NextDocument {
 				dir={process.env.NEXT_PUBLIC_SITE_DIRECTION}
 			>
 				<Head>
+					{/* Preload hero image for faster LCP */}
+					<link
+						rel="preload"
+						as="image"
+						href="/images/hero-ghost-tour.png"
+						type="image/png"
+					/>
+					
 					{/* Preconnect to external domains */}
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
