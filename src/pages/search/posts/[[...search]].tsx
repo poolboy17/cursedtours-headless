@@ -35,8 +35,11 @@ const Page: FaustPage<SearchPageQueryGetPostsBySearchQuery> = (props) => {
 	const {
 		currentPosts,
 		handleChangeFilterPosts,
-		handleClickShowMore,
+		handleClickNext,
+		handleClickPrev,
 		hasNextPage,
+		hasPrevPage,
+		currentPage,
 		loading,
 	} = useHandleGetPostsArchivePage({
 		initPosts: (posts?.nodes as PostDataFragmentType[]) || [],
@@ -62,8 +65,11 @@ const Page: FaustPage<SearchPageQueryGetPostsBySearchQuery> = (props) => {
 					<GridPostsArchive
 						posts={currentPosts}
 						loading={loading}
-						showLoadmore={hasNextPage}
-						onClickLoadmore={handleClickShowMore}
+						showNextPagination={hasNextPage}
+						showPrevPagination={hasPrevPage}
+						onClickNext={handleClickNext}
+						onClickPrev={handleClickPrev}
+						currentPage={currentPage}
 					/>
 				</SearchPageLayout>
 			</PageLayout>

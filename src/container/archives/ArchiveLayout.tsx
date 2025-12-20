@@ -46,17 +46,18 @@ const ArchiveLayout: FC<IArchiveLayoutProps> = ({
 	top10Categories,
 }) => {
 	// START ----------
-	//
 	const {} = useGetPostsNcmazMetaByIds({
 		posts: (posts || []) as TPostCard[],
 	})
-	//
 
 	const {
 		currentPosts,
 		handleChangeFilterPosts,
-		handleClickShowMore,
+		handleClickNext,
+		handleClickPrev,
 		hasNextPage,
+		hasPrevPage,
+		currentPage,
 		loading,
 	} = useHandleGetPostsArchivePage({
 		initPosts: posts,
@@ -91,8 +92,11 @@ const ArchiveLayout: FC<IArchiveLayoutProps> = ({
 						<GridPostsArchive
 							posts={currentPosts}
 							loading={loading}
-							showLoadmore={hasNextPage}
-							onClickLoadmore={handleClickShowMore}
+							showNextPagination={hasNextPage}
+							showPrevPagination={hasPrevPage}
+							onClickNext={handleClickNext}
+							onClickPrev={handleClickPrev}
+							currentPage={currentPage}
 						/>
 					</div>
 

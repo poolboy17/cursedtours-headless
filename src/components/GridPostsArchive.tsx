@@ -20,6 +20,7 @@ interface Props {
 	showPrevPagination?: boolean
 	onClickNext?: () => void
 	onClickPrev?: () => void
+	currentPage?: number
 	/** Number of skeleton cards to show during loading - should match expected post count to prevent CLS */
 	skeletonCount?: number
 }
@@ -34,6 +35,7 @@ const GridPostsArchive: FC<Props> = ({
 	showPrevPagination,
 	onClickNext,
 	onClickPrev,
+	currentPage = 1,
 	skeletonCount = 8,
 }) => {
 	return (
@@ -51,7 +53,7 @@ const GridPostsArchive: FC<Props> = ({
 				</div>
 			)}
 
-			{/* PAGINATION */}
+			{/* LEGACY LOADMORE - kept for backwards compatibility */}
 			{showLoadmore ? (
 				<div className="mt-12 flex justify-center lg:mt-14">
 					<ButtonPrimary loading={loading} onClick={onClickLoadmore}>
@@ -61,27 +63,39 @@ const GridPostsArchive: FC<Props> = ({
 			) : null}
 
 			{/* PAGINATION */}
-			{showNextPagination || showPrevPagination ? (
-				<div className="mt-12 flex justify-center gap-4 lg:mt-14">
-					<Button
-						pattern="third"
-						loading={loading}
-						onClick={onClickPrev}
-						disabled={!showPrevPagination}
-					>
-						<ArrowLeftIcon className="me-2 h-5 w-5 rtl:rotate-180" />
-						{T['Prev']}
-					</Button>
-					<Button
-						pattern="third"
-						loading={loading}
-						onClick={onClickNext}
-						disabled={!showNextPagination}
-					>
-						{T['Next']}
-						<ArrowRightIcon className="ms-2 h-5 w-5 rtl:rotate-180" />
-					</Button>
-				</div>
+			{(showNextPagination || showPrevPagination) ? (
+				<nav 
+					className="mt-12 flex flex-col items-center gap-4 lg:mt-14"
+					aria-label="Pagination"
+				>
+					<div className="flex items-center gap-4">
+						<Button
+							pattern="third"
+							loading={loading}
+							onClick={onClickPrev}
+							disabled={!showPrevPagination || loading}
+							aria-label="Go to previous page"
+						>
+							<ArrowLeftIcon className="me-2 h-5 w-5 rtl:rotate-180" />
+							{T['Prev']}
+						</Button>
+						
+						<span className="flex items-center justify-center min-w-[100px] px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 rounded-full">
+							Page {currentPage}
+						</span>
+						
+						<Button
+							pattern="third"
+							loading={loading}
+							onClick={onClickNext}
+							disabled={!showNextPagination || loading}
+							aria-label="Go to next page"
+						>
+							{T['Next']}
+							<ArrowRightIcon className="ms-2 h-5 w-5 rtl:rotate-180" />
+						</Button>
+					</div>
+				</nav>
 			) : null}
 		</div>
 	)

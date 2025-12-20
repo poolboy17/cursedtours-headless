@@ -6,9 +6,8 @@ import { FILTERS_OPTIONS, GET_POSTS_FIRST_COMMON } from "@/contains/contants";
 import { PostDataFragmentType } from "@/data/types";
 import { QUERY_GET_POSTS_BY } from "@/fragments/queries";
 import errorHandling from "@/utils/errorHandling";
-import updatePostFromUpdateQuery from "@/utils/updatePostFromUpdateQuery";
 import { useLazyQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface Props {
   initPosts?: PostDataFragmentType[] | null;
@@ -21,6 +20,11 @@ interface Props {
   authorDatabaseId?: number | null;
   categorySlug?: string | null;
   search?: string | null;
+}
+
+interface PageCursor {
+  cursor: string | null;
+  posts: PostDataFragmentType[];
 }
 
 export default function useHandleGetPostsArchivePage(props: Props) {
@@ -38,6 +42,16 @@ export default function useHandleGetPostsArchivePage(props: Props) {
     useState<`${PostObjectsConnectionOrderbyEnum}/${OrderEnum}`>();
 
   const [refetchTimes, setRefetchTimes] = useState(0);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageHistory, setPageHistory] = useState<PageCursor[]>([
+    { cursor: null, posts: posts || [] }
+  ]);
+  const [currentEndCursor, setCurrentEndCursor] = useState<string | null>(
+    initPostsPageInfo?.endCursor || null
+  );
+  const [hasNextPage, setHasNextPage] = useState(!!initPostsPageInfo?.hasNextPage);
 
   const routerQueryFilter = filterParam;
   const [queryGetPostsByCategoryId, postsByCategoryIdResult] = useLazyQuery(
@@ -69,11 +83,9 @@ export default function useHandleGetPostsArchivePage(props: Props) {
   );
 
   function checkRouterQueryFilter() {
-    // tra ve false neu khong co filter/ lan dau tien vao trang  / khi chua click vao filter nao
     if (!routerQueryFilter) {
       return false;
     }
-
     const [field, order] = routerQueryFilter?.split("/");
     return {
       field: field as PostObjectsConnectionOrderbyEnum,
@@ -81,7 +93,7 @@ export default function useHandleGetPostsArchivePage(props: Props) {
     };
   }
 
-  // get posts by category id  and by filter
+  // Reset pagination when filter changes
   useEffect(() => {
     if (!routerQueryFilter) {
       return;
@@ -91,6 +103,10 @@ export default function useHandleGetPostsArchivePage(props: Props) {
       return;
     }
 
+    // Reset to page 1 with new filter
+    setCurrentPage(1);
+    setPageHistory([{ cursor: null, posts: [] }]);
+    
     queryGetPostsByCategoryId({
       variables: {
         first: GET_POSTS_FIRST_COMMON,
@@ -101,58 +117,121 @@ export default function useHandleGetPostsArchivePage(props: Props) {
     });
   }, [routerQueryFilter]);
 
-  const handleClickShowMore = () => {
-    // Articles tab
-    if (!postsByCategoryIdResult.called) {
-      queryGetPostsByCategoryId({
-        variables: {
-          after: initPostsPageInfo?.endCursor,
-          first: GET_POSTS_FIRST_COMMON,
-        },
-      });
-    } else {
-      postsByCategoryIdResult.fetchMore({
-        variables: {
-          after: postsByCategoryIdResult.data?.posts?.pageInfo?.endCursor,
-          first: GET_POSTS_FIRST_COMMON,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          return updatePostFromUpdateQuery(prev, fetchMoreResult);
-        },
+  // Update page history when new data arrives
+  useEffect(() => {
+    if (postsByCategoryIdResult.data?.posts?.nodes) {
+      const newPosts = postsByCategoryIdResult.data.posts.nodes as PostDataFragmentType[];
+      const pageInfo = postsByCategoryIdResult.data.posts.pageInfo;
+      
+      setCurrentEndCursor(pageInfo?.endCursor || null);
+      setHasNextPage(!!pageInfo?.hasNextPage);
+      
+      // Update current page in history
+      setPageHistory(prev => {
+        const updated = [...prev];
+        if (updated[currentPage - 1]) {
+          updated[currentPage - 1] = { 
+            cursor: currentPage === 1 ? null : updated[currentPage - 2]?.cursor || null,
+            posts: newPosts 
+          };
+        }
+        return updated;
       });
     }
-  };
+  }, [postsByCategoryIdResult.data, currentPage]);
+
+  // Navigate to next page
+  const handleClickNext = useCallback(() => {
+    if (!hasNextPage) return;
+    
+    const nextPage = currentPage + 1;
+    const fiterValue = checkRouterQueryFilter();
+    
+    // Save current cursor for this page before moving to next
+    setPageHistory(prev => {
+      const updated = [...prev];
+      // Ensure we have an entry for the next page
+      if (!updated[nextPage - 1]) {
+        updated[nextPage - 1] = { cursor: currentEndCursor, posts: [] };
+      }
+      return updated;
+    });
+    
+    setCurrentPage(nextPage);
+    
+    queryGetPostsByCategoryId({
+      variables: {
+        after: currentEndCursor,
+        first: GET_POSTS_FIRST_COMMON,
+        ...(fiterValue && { field: fiterValue.field, order: fiterValue.order }),
+      },
+    });
+  }, [hasNextPage, currentPage, currentEndCursor, queryGetPostsByCategoryId]);
+
+  // Navigate to previous page
+  const handleClickPrev = useCallback(() => {
+    if (currentPage <= 1) return;
+    
+    const prevPage = currentPage - 1;
+    setCurrentPage(prevPage);
+    
+    // If we have cached posts for previous page, use them
+    const cachedPage = pageHistory[prevPage - 1];
+    if (cachedPage && cachedPage.posts.length > 0) {
+      // Posts are already in history, just update cursor
+      const prevCursor = prevPage > 1 ? pageHistory[prevPage - 2]?.cursor : null;
+      setCurrentEndCursor(pageHistory[prevPage - 1]?.cursor || initPostsPageInfo?.endCursor || null);
+      setHasNextPage(true); // We came from next page, so there's definitely a next
+      return;
+    }
+    
+    // Otherwise fetch the previous page
+    const fiterValue = checkRouterQueryFilter();
+    const prevCursor = prevPage === 1 ? "" : (pageHistory[prevPage - 2]?.cursor || "");
+    
+    queryGetPostsByCategoryId({
+      variables: {
+        after: prevCursor,
+        first: GET_POSTS_FIRST_COMMON,
+        ...(fiterValue && { field: fiterValue.field, order: fiterValue.order }),
+      },
+    });
+  }, [currentPage, pageHistory, queryGetPostsByCategoryId, initPostsPageInfo]);
 
   const handleChangeFilterPosts = (item: (typeof FILTERS_OPTIONS)[number]) => {
     setfilterParam(item.value);
   };
 
-  //  data for render
+  // Determine current posts to display
   let loading = postsByCategoryIdResult.loading;
-  let currentPosts = posts || [];
-  let hasNextPage = !!initPostsPageInfo?.hasNextPage;
-  currentPosts = [
-    ...(!checkRouterQueryFilter() ? posts || [] : []),
-    ...((postsByCategoryIdResult.data?.posts
-      ?.nodes as PostDataFragmentType[]) || []),
-  ];
-
-  // hien thi init posts khi lan dau tien click vao filter mac dinh la DATE/DESC
-  if (!currentPosts.length && loading && filterParam === "DATE/DESC") {
-    currentPosts = posts || [];
+  let currentPosts: PostDataFragmentType[] = [];
+  
+  // Get posts for current page
+  if (postsByCategoryIdResult.called && postsByCategoryIdResult.data?.posts?.nodes) {
+    currentPosts = postsByCategoryIdResult.data.posts.nodes as PostDataFragmentType[];
+  } else if (pageHistory[currentPage - 1]?.posts.length > 0) {
+    currentPosts = pageHistory[currentPage - 1].posts;
+  } else if (currentPage === 1 && posts) {
+    currentPosts = posts;
   }
 
-  if (postsByCategoryIdResult.called) {
-    hasNextPage =
-      !!postsByCategoryIdResult.data?.posts?.pageInfo?.hasNextPage ||
-      postsByCategoryIdResult.loading;
+  // Show initial posts during first filter load
+  if (!currentPosts.length && loading && filterParam === "DATE/DESC" && posts) {
+    currentPosts = posts;
   }
+
+  const hasPrevPage = currentPage > 1;
 
   return {
     loading,
     currentPosts,
     hasNextPage,
-    handleClickShowMore,
+    hasPrevPage,
+    currentPage,
+    handleClickNext,
+    handleClickPrev,
     handleChangeFilterPosts,
+    // Legacy support - keeping for backwards compatibility
+    handleClickShowMore: handleClickNext,
   };
 }
