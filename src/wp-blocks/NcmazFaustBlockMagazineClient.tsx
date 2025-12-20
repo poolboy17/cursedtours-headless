@@ -1,10 +1,6 @@
-import { useLazyQuery } from '@apollo/client'
 import { NcmazFaustBlockMagazineFragmentFragment } from '../__generated__/graphql'
 import { WordPressBlock } from '@faustwp/blocks'
 import Empty from '@/components/Empty'
-import ButtonPrimary from '@/components/Button/ButtonPrimary'
-import { QUERY_GET_POSTS_BY } from '@/fragments/queries'
-import updatePostFromUpdateQuery from '@/utils/updatePostFromUpdateQuery'
 import BackgroundSection from '@/components/BackgroundSection/BackgroundSection'
 import { TPostCard } from '@/components/Card2/Card2'
 import SectionHero3 from '@/components/Sections/SectionHero3'
@@ -14,7 +10,6 @@ import SectionMagazine5 from '../components/Sections/SectionMagazine5'
 import SectionMagazine8 from '../components/Sections/SectionMagazine8'
 import SectionMagazine2 from '../components/Sections/SectionMagazine2'
 import SectionMagazine6 from '../components/Sections/SectionMagazine6'
-import errorHandling from '@/utils/errorHandling'
 import { useEffect, useState } from 'react'
 import getTrans from '@/utils/getTrans'
 import { LinkProps } from 'next/link'
@@ -33,9 +28,6 @@ const DynamicSectionMagazine4 = dynamic(
 const DynamicSectionMagazine7 = dynamic(
 	() => import('../components/Sections/SectionMagazine7'),
 )
-// const DynamicSectionMagazine8 = dynamic(
-// 	() => import('../components/Sections/SectionMagazine8'),
-// )
 const DynamicSectionMagazine9 = dynamic(
 	() => import('../components/Sections/SectionMagazine9'),
 )
@@ -54,7 +46,6 @@ const DynamicSectionSliderPosts = dynamic(
 const DynamicSectionLargeSlider = dynamic(
 	() => import('../components/Sections/SectionLargeSlider'),
 )
-//
 
 const NcmazFaustBlockMagazineClient: WordPressBlock<
 	NcmazFaustBlockMagazineFragmentFragment & {
@@ -71,122 +62,47 @@ const NcmazFaustBlockMagazineClient: WordPressBlock<
 			}
 		} | null
 	}
-> = ({ attributes, clientId, parentClientId, renderedHtml, dataObject }) => {
+> = ({ attributes, renderedHtml, dataObject }) => {
 	const { blockVariation, hasBackground, showViewAll } = attributes || {}
-
-	const [queryGetPostByVariablesFromSSR, getPostByVariablesFromSSRResult] =
-		useLazyQuery(QUERY_GET_POSTS_BY, {
-			notifyOnNetworkStatusChange: true,
-			context: {
-				fetchOptions: {
-					method: process.env.NEXT_PUBLIC_SITE_API_METHOD || 'GET',
-				},
-			},
-			onError: (error) => {
-				errorHandling(error)
-			},
-		})
-
 	const T = getTrans()
 
-	const [dataInitPosts_state, setDataInitPosts_state] = useState<
-		TPostCard[] | null
-	>()
-	const [dataInitErrors_state, setDataInitErrors_state] = useState<
-		any[] | null
-	>()
-	const [dataInitQueryVariable_state, setDataInitQueryVariable_state] =
-		useState<any | null>()
-	const [dataInitPageInfo_state, setDataInitPageInfo_state] = useState<{
-		endCursor: string
-		hasNextPage: boolean
-	} | null>()
+	const [dataInitPosts_state, setDataInitPosts_state] = useState<TPostCard[] | null>()
+	const [dataInitErrors_state, setDataInitErrors_state] = useState<any[] | null>()
+	const [dataInitQueryVariable_state, setDataInitQueryVariable_state] = useState<any | null>()
 
-	//
 	const dataInitPosts = dataObject?.block_posts || dataInitPosts_state
 	const dataInitErrors = dataObject?.errors || dataInitErrors_state
-	const dataInitQueryVariable =
-		dataObject?.queryVariables || dataInitQueryVariable_state
-	const dataInitPageInfo = dataObject?.pageInfo || dataInitPageInfo_state
-
-	//
+	const dataInitQueryVariable = dataObject?.queryVariables || dataInitQueryVariable_state
 
 	useEffect(() => {
 		if (typeof window === 'undefined' || dataObject !== null) {
 			return
 		}
-		// Deprecated, will be removed in future official versions!!!
-		// Deprecated, will be removed in future official versions!!!
+		// Parse data from rendered HTML (deprecated approach)
 		const renderedHtmlNode = document.createElement('div')
 		renderedHtmlNode.innerHTML = renderedHtml || ''
-		const contentNode = renderedHtmlNode.querySelector(
-			'.ncmazfc-block-content-common-class',
-		)
+		const contentNode = renderedHtmlNode.querySelector('.ncmazfc-block-content-common-class')
 
-		const dataInitPosts: TPostCard[] = JSON.parse(
+		const posts: TPostCard[] = JSON.parse(
 			contentNode?.getAttribute('data-ncmazfc-init-posts') || 'null',
 		)
-		const dataInitErrors = JSON.parse(
+		const errors = JSON.parse(
 			contentNode?.getAttribute('data-ncmazfc-init-errors') || 'null',
 		)
-		const dataInitQueryVariable = JSON.parse(
+		const queryVariable = JSON.parse(
 			contentNode?.getAttribute('data-ncmazfc-init-query-variables') || 'null',
 		)
-		const dataInitPageInfo: {
-			endCursor: string
-			hasNextPage: boolean
-		} | null = JSON.parse(
-			contentNode?.getAttribute('data-ncmazfc-init-data-page-info') || 'null',
-		)
 
-		setDataInitPosts_state(dataInitPosts)
-		setDataInitErrors_state(dataInitErrors)
-		setDataInitQueryVariable_state(dataInitQueryVariable)
-		setDataInitPageInfo_state(dataInitPageInfo)
-	}, [])
+		setDataInitPosts_state(posts)
+		setDataInitErrors_state(errors)
+		setDataInitQueryVariable_state(queryVariable)
+	}, [dataObject, renderedHtml])
 
-	//
 	useGetPostsNcmazMetaByIds({
 		posts: dataInitPosts || [],
 	})
-	//
 
-	const handleClickLoadmore = () => {
-		if (dataInitPageInfo?.hasNextPage !== true) {
-			return
-		}
-
-		if (!getPostByVariablesFromSSRResult.called) {
-			queryGetPostByVariablesFromSSR({
-				variables: {
-					...(dataInitQueryVariable || {}),
-					after: dataInitPageInfo?.endCursor,
-				},
-			})
-			return
-		}
-
-		getPostByVariablesFromSSRResult.fetchMore({
-			variables: {
-				...(dataInitQueryVariable || {}),
-				after: getPostByVariablesFromSSRResult.data?.posts?.pageInfo?.endCursor,
-			},
-			updateQuery: (prev, { fetchMoreResult }) => {
-				return updatePostFromUpdateQuery(prev, fetchMoreResult)
-			},
-		})
-	}
-
-	let dataLists = [
-		...(dataInitPosts || []),
-		...(getPostByVariablesFromSSRResult.data?.posts?.nodes || []),
-	] as TPostCard[]
-
-	const showLoadmoreButton = !getPostByVariablesFromSSRResult.data?.posts
-		? dataInitPageInfo?.hasNextPage === true
-		: getPostByVariablesFromSSRResult.data?.posts?.pageInfo?.hasNextPage ===
-			true
-
+	// View All link goes to paginated /posts page
 	const viewAllLinkHref: LinkProps['href'] | undefined = showViewAll
 		? {
 				pathname: '/posts',
@@ -198,34 +114,19 @@ const NcmazFaustBlockMagazineClient: WordPressBlock<
 		<>
 			{hasBackground ? <BackgroundSection /> : null}
 			<MagazineLayoutType
-				posts={dataLists || []}
+				posts={dataInitPosts || []}
 				blockVariation={blockVariation}
-				error={dataInitErrors || getPostByVariablesFromSSRResult.error}
+				error={dataInitErrors}
 				viewAllLinkHref={viewAllLinkHref}
 			/>
 
-			{/* FOR Magzine or grid */}
-			{!(blockVariation || '').startsWith('slider-') &&
-			(showLoadmoreButton || showViewAll) ? (
-				<div className="mt-12 flex items-center justify-center gap-4 sm:mt-16 2xl:mt-20">
-					{showLoadmoreButton ? (
-						<ButtonPrimary
-							loading={getPostByVariablesFromSSRResult.loading}
-							onClick={handleClickLoadmore}
-						>
-							{T['Show me more']}
-						</ButtonPrimary>
-					) : null}
-
-					{showViewAll ? (
-						<Button
-							href={viewAllLinkHref}
-							pattern={showLoadmoreButton ? 'third' : 'primary'}
-						>
-							{T['View all']}
-							<ArrowRightIcon className="ms-2 h-5 w-5 rtl:rotate-180" />
-						</Button>
-					) : null}
+			{/* View All link - directs to paginated posts page (no infinite scroll) */}
+			{!(blockVariation || '').startsWith('slider-') && showViewAll ? (
+				<div className="mt-12 flex items-center justify-center sm:mt-16 2xl:mt-20">
+					<Button href={viewAllLinkHref} pattern="primary">
+						{T['View all']}
+						<ArrowRightIcon className="ms-2 h-5 w-5 rtl:rotate-180" />
+					</Button>
 				</div>
 			) : null}
 		</>
@@ -244,7 +145,7 @@ export function MagazineLayoutType({
 	viewAllLinkHref?: LinkProps['href']
 }) {
 	if (error) {
-		console.error('_____ LayoutType error', { blockVariation, posts, error })
+		console.error('MagazineLayoutType error:', { blockVariation, posts, error })
 	}
 
 	if (!posts || !posts?.length) {
@@ -280,7 +181,6 @@ export function MagazineLayoutType({
 			return <DynamicSectionLargeSlider posts={posts} />
 		case 'magazine-13':
 			return <SectionHero3 posts={posts} />
-
 		// Grids
 		case 'grid-1':
 			return (
@@ -324,8 +224,7 @@ export function MagazineLayoutType({
 					postCardName="card15Podcast"
 				/>
 			)
-
-		// Slider
+		// Sliders
 		case 'slider-1':
 			return (
 				<DynamicSectionSliderPosts
@@ -381,7 +280,6 @@ export function MagazineLayoutType({
 					viewAllLinkHref={viewAllLinkHref}
 				/>
 			)
-
 		default:
 			return <DynamicSectionMagazine9 posts={posts} />
 	}
