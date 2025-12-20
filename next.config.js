@@ -1,10 +1,15 @@
 const { withFaust, getWpHostname } = require('@faustwp/core')
 const { createSecureHeaders } = require('next-secure-headers')
 
-// Bundle analyzer for visibility into bundle size
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-	enabled: process.env.ANALYZE === 'true',
-})
+// Bundle analyzer for visibility into bundle size (optional)
+let withBundleAnalyzer = (config) => config
+try {
+	withBundleAnalyzer = require('@next/bundle-analyzer')({
+		enabled: process.env.ANALYZE === 'true',
+	})
+} catch (e) {
+	// bundle-analyzer not installed, skip
+}
 
 /**
  * @type {import('next').NextConfig}
