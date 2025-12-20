@@ -331,6 +331,7 @@ export const NC_POST_CARD_NOT_NCMAZGALLERY_FRAGMENT = gql(/* GraphQL */ `
 		commentStatus
 		commentCount
 		excerpt
+		content
 		author {
 			node {
 				...NcmazFcUserShortForPostCardFragment
