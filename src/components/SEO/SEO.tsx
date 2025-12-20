@@ -41,7 +41,7 @@ export default function SEO({
     ? imageUrl.includes('wp.cursedtours.com') 
       ? `${SITE_URL}/_next/image/?url=${encodeURIComponent(imageUrl)}&w=1200&q=75`
       : imageUrl
-    : `${SITE_URL}/images/hero-ghost-tour.png`; // Default OG image
+    : `${SITE_URL}/og-image.png`; // Default OG image with Cursed Tours branding
 
   const descriptionNoHtmlTags = description?.replace(/<[^>]*>?/gm, "").trim() || "";
   

@@ -1,7 +1,7 @@
 import { NC_SITE_SETTINGS } from '@/contains/site-settings'
 import NextDocument, { Html, Head, Main, NextScript } from 'next/document'
 
-const FAVICON_VERSION = 4
+const FAVICON_VERSION = 5
 const SITE_URL = process.env.NEXT_PUBLIC_URL
 const SITE_TITLE = NC_SITE_SETTINGS.site_info?.site_title
 
