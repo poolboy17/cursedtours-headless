@@ -24,12 +24,12 @@ export default class Document extends NextDocument {
 				dir={process.env.NEXT_PUBLIC_SITE_DIRECTION}
 			>
 				<Head>
-					{/* Preload hero image for faster LCP */}
+					{/* Preload hero image for faster LCP - WebP 62KB */}
 					<link
 						rel="preload"
 						as="image"
-						href="/images/hero-ghost-tour.png"
-						type="image/png"
+						href="/images/hero-ghost-tour.webp"
+						type="image/webp"
 					/>
 					
 					{/* Preconnect to external domains */}
