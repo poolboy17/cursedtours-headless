@@ -6,15 +6,17 @@ import { FaustTemplate } from '@faustwp/core'
 import { TPostCard } from '@/components/Card2/Card2'
 import useGetPostsNcmazMetaByIds from '@/hooks/useGetPostsNcmazMetaByIds'
 import GridPostsArchive from '@/components/GridPostsArchive'
-import { QUERY_GET_POSTS_BY } from '@/fragments/queries'
+import { QUERY_GET_POSTS_BY, QUERY_GET_TOP_10_CATEGORIES } from '@/fragments/queries'
 import { useRouter } from 'next/router'
 import SectionHeroBranded from '@/components/Sections/SectionHeroBranded'
 import SectionMagazine1 from '@/components/Sections/SectionMagazine1'
 import SectionMagazine1Skeleton from '@/components/Sections/SectionMagazine1Skeleton'
+import SectionSliderNewCategories from '@/components/SectionSliderNewCategories/SectionSliderNewCategories'
 import Heading from '@/components/Heading/Heading'
 import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { WebsiteSchema, OrganizationSchema } from '@/components/StructuredData'
+import { TCategoryCardFull } from '@/components/CardCategory1/CardCategory1'
 
 // Constants
 const MAGAZINE_POST_COUNT = 4
@@ -34,7 +36,15 @@ const Main: FaustTemplate<any> = (props: any) => {
 		},
 	})
 
+	// Fetch top categories
+	const { data: categoriesData, loading: categoriesLoading } = useQuery(QUERY_GET_TOP_10_CATEGORIES, {
+		variables: {
+			first: 8,
+		},
+	})
+
 	const allPosts = (data?.posts?.nodes || []) as PostDataFragmentType[]
+	const categories = (categoriesData?.categories?.nodes || []) as TCategoryCardFull[]
 	
 	// Split posts for different sections
 	const magazinePosts = allPosts.slice(0, MAGAZINE_POST_COUNT)
@@ -63,7 +73,21 @@ const Main: FaustTemplate<any> = (props: any) => {
 			{/* Branded Hero Section - Full Width */}
 			<SectionHeroBranded className="-mt-2" />
 
-			<div className="container pb-16 pt-12 lg:pb-28 lg:pt-16">
+			{/* Categories Section */}
+			{!categoriesLoading && categories.length > 0 && (
+				<div className="container py-12 lg:py-16">
+					<Heading desc="Browse our haunted content by topic">
+						Explore Categories
+					</Heading>
+					<SectionSliderNewCategories
+						categories={categories}
+						categoryCardType="card3"
+						itemPerRow={4}
+					/>
+				</div>
+			)}
+
+			<div className="container pb-16 lg:pb-28">
 				{/* Featured Posts - Magazine Layout */}
 				<div className="mb-12 lg:mb-16">
 					<Heading desc="Fresh stories from the other side">
