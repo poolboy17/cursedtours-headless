@@ -14,6 +14,7 @@ import SectionMagazine1Skeleton from '@/components/Sections/SectionMagazine1Skel
 import Heading from '@/components/Heading/Heading'
 import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { WebsiteSchema, OrganizationSchema } from '@/components/StructuredData'
 
 // Constants
 const MAGAZINE_POST_COUNT = 4
@@ -44,7 +45,12 @@ const Main: FaustTemplate<any> = (props: any) => {
 	})
 
 	return (
-		<PageLayout
+		<>
+			{/* Structured Data for Homepage */}
+			<WebsiteSchema />
+			<OrganizationSchema />
+			
+			<PageLayout
 			headerMenuItems={props.data?.primaryMenuItems?.nodes || []}
 			footerMenuItems={props.data?.footerMenuItems?.nodes || []}
 			pageFeaturedImageUrl={null}
@@ -97,6 +103,7 @@ const Main: FaustTemplate<any> = (props: any) => {
 				</div>
 			</div>
 		</PageLayout>
+		</>
 	)
 }
 

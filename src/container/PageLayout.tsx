@@ -17,7 +17,15 @@ interface Props {
   pageFeaturedImageUrl?: string | null | undefined;
   generalSettings?: NcgeneralSettingsFieldsFragmentFragment | null | undefined;
   pageDescription?: string | null | undefined;
+  // New SEO props
+  pageType?: 'website' | 'article';
+  publishedTime?: string | null;
+  modifiedTime?: string | null;
+  author?: string | null;
+  section?: string | null;
 }
+
+const SITE_NAME = 'Cursed Tours';
 
 const PageLayout: FC<Props> = ({
   children,
@@ -27,13 +35,29 @@ const PageLayout: FC<Props> = ({
   pageTitle,
   generalSettings,
   pageDescription,
+  pageType = 'website',
+  publishedTime,
+  modifiedTime,
+  author,
+  section,
 }) => {
+  // Build proper title - handle homepage specially
+  const isHomepage = !pageTitle || pageTitle === 'Home';
+  const seoTitle = isHomepage 
+    ? `${SITE_NAME} - Where History Haunts`
+    : `${pageTitle} - ${SITE_NAME}`;
+
   return (
     <>
       <SEO
-        title={(pageTitle || "") + " - " + (generalSettings?.title || "")}
+        title={seoTitle}
         description={pageDescription || generalSettings?.description || ""}
         imageUrl={pageFeaturedImageUrl}
+        type={pageType}
+        publishedTime={publishedTime}
+        modifiedTime={modifiedTime}
+        author={author}
+        section={section}
       />
 
       <SiteHeader

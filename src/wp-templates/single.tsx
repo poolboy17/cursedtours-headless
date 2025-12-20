@@ -25,6 +25,9 @@ import { TCategoryCardFull } from '@/components/CardCategory1/CardCategory1'
 import SingleTypeAudio from '@/container/singles/single-audio/single-audio'
 import SingleTypeVideo from '@/container/singles/single-video/single-video'
 import SingleTypeGallery from '@/container/singles/single-gallery/single-gallery'
+import { ArticleSchema } from '@/components/StructuredData'
+
+const SITE_URL = process.env.NEXT_PUBLIC_URL || 'https://cursedtours.com'
 
 const DynamicSingleRelatedPosts = dynamic(
 	() => import('@/container/singles/SingleRelatedPosts'),
@@ -69,9 +72,6 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 	}, [])
 
 	const _post = props.data?.post || {}
-
-	// console.log('🚀 ~ file: single.tsx ~ line 68 ~ Component ~ _post', _post)
-
 	const _relatedPosts = (props.data?.posts?.nodes as TPostCard[]) || []
 	const _top10Categories =
 		(props.data?.categories?.nodes as TCategoryCardFull[]) || []
@@ -83,13 +83,21 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 		featuredImage,
 		databaseId,
 		excerpt,
+		date,
+		modified,
+		author,
+		categories,
+		uri,
 	} = getPostDataFromPostFragment(_post)
 
-	//
+	// Get author name and category for SEO
+	const authorName = author?.name || 'Cursed Tours'
+	const primaryCategory = categories?.nodes?.[0]?.name || null
+	const postUrl = `${SITE_URL}${uri || router.asPath}`
+
 	const {} = useGetPostsNcmazMetaByIds({
 		posts: (IS_PREVIEW ? [] : [_post]) as TPostCard[],
 	})
-	//
 
 	// Query update post view count
 	const [handleUpdateReactionCount, { reset }] = useMutation(
@@ -107,7 +115,6 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 			return
 		}
 
-		// user chua dang nhap, va update view count voi user la null
 		if (isAuthenticated === false) {
 			handleUpdateReactionCount({
 				variables: {
@@ -119,12 +126,10 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 			return
 		}
 
-		// user da dang nhap, va luc nay viewer dang fetch.
 		if (!viewer?.databaseId) {
 			return
 		}
 
-		// khi viewer fetch xong, luc nay viewer da co databaseId, va se update view count voi user la viewer
 		handleUpdateReactionCount({
 			variables: {
 				post_id: databaseId,
@@ -177,6 +182,20 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 
 	return (
 		<>
+			{/* Article Structured Data for SEO */}
+			{title && date && (
+				<ArticleSchema
+					title={title}
+					description={excerpt || ''}
+					url={postUrl}
+					imageUrl={featuredImage?.sourceUrl}
+					publishedTime={date}
+					modifiedTime={modified}
+					authorName={authorName}
+					section={primaryCategory}
+				/>
+			)}
+
 			<PageLayout
 				headerMenuItems={props.data?.primaryMenuItems?.nodes || []}
 				footerMenuItems={props.data?.footerMenuItems?.nodes || []}
@@ -186,6 +205,11 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 				generalSettings={
 					props.data?.generalSettings as NcgeneralSettingsFieldsFragmentFragment
 				}
+				pageType="article"
+				publishedTime={date}
+				modifiedTime={modified}
+				author={authorName}
+				section={primaryCategory}
 			>
 				{ncPostMetaData?.showRightSidebar ? (
 					<div>
@@ -201,7 +225,6 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 								</div>
 							</div>
 
-							{/* RELATED POSTS */}
 							<DynamicSingleRelatedPosts
 								posts={_relatedPosts}
 								postDatabaseId={databaseId}
@@ -213,11 +236,9 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 						{renderHeaderType()}
 
 						<div className="container mt-10">
-							{/* SINGLE MAIN CONTENT */}
 							<SingleContent post={_post} />
 						</div>
 
-						{/* RELATED POSTS */}
 						<DynamicSingleRelatedPosts
 							posts={_relatedPosts}
 							postDatabaseId={databaseId}
@@ -228,6 +249,7 @@ const Component: FaustTemplate<GetPostSiglePageQuery> = (props) => {
 		</>
 	)
 }
+
 
 Component.variables = ({ databaseId }, ctx) => {
 	return {
