@@ -1,0 +1,53 @@
+name: Warm Cache
+
+on:
+  # Manual trigger only - run when you want
+  workflow_dispatch:
+  # Or weekly on Sunday night to keep cache fresh
+  schedule:
+    - cron: '0 3 * * 0'
+
+jobs:
+  warm-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warm all pages from WordPress sitemap
+        run: |
+          echo "Fetching WordPress sitemap (has all posts with cursedtours.com URLs)..."
+          
+          # WordPress post sitemap has all posts with correct frontend URLs
+          URLS=$(curl -s https://wp.cursedtours.com/post-sitemap1.xml | grep -oP '<loc>\K[^<]+' | grep 'cursedtours.com')
+          
+          # Also get categories
+          CAT_URLS=$(curl -s https://wp.cursedtours.com/category-sitemap1.xml | grep -oP '<loc>\K[^<]+' | grep 'cursedtours.com' || true)
+          
+          # Combine and dedupe
+          ALL_URLS=$(echo -e "$URLS\n$CAT_URLS" | grep -v '^$' | sort -u)
+          
+          TOTAL=$(echo "$ALL_URLS" | wc -l)
+          COUNT=0
+          FAILED=0
+          
+          echo "Found $TOTAL URLs to warm"
+          echo ""
+          
+          for url in $ALL_URLS; do
+            COUNT=$((COUNT + 1))
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url" || echo "000")
+            
+            if [ "$STATUS" = "200" ]; then
+              echo "✓ [$COUNT/$TOTAL] $url"
+            else
+              echo "✗ [$COUNT/$TOTAL] $url (HTTP $STATUS)"
+              FAILED=$((FAILED + 1))
+            fi
+            
+            # Small delay to avoid overwhelming the server
+            sleep 0.5
+          done
+          
+          echo ""
+          echo "================================"
+          echo "Cache warming complete!"
+          echo "Total: $TOTAL | Success: $((TOTAL - FAILED)) | Failed: $FAILED"
+          echo "================================"

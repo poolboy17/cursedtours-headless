@@ -1,0 +1,50 @@
+modules = ["nodejs-20"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+packages = ["unzip"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Next.js Frontend"
+
+[[workflows.workflow]]
+name = "Next.js Frontend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[userenv]
+
+[userenv.shared]
+NEXT_PUBLIC_SITE_DIRECTION = "ltr"
+NEXT_PUBLIC_SITE_GEAR_ICON = "false"
+NEXT_PUBLIC_SITE_API_METHOD = "GET"
+NEXT_PUBLIC_IMAGE_REMOTE_HOSTNAME_1 = "i0.wp.com"
+NEXT_PUBLIC_IMAGE_REMOTE_HOSTNAME_2 = "i0.wp.com"
+PORT = "5000"
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["npm", "run", "start"]
+build = ["npm", "run", "build"]
