@@ -33,8 +33,8 @@ export default function SEO({
 }: Props) {
   const router = useRouter();
   
-  // Build canonical URL from router if not provided
-  const canonicalUrl = url || `${SITE_URL}${router.asPath.split('?')[0]}`;
+  // Build canonical URL from router if not provided - clean any whitespace/newlines
+  const canonicalUrl = (url || `${SITE_URL}${router.asPath.split('?')[0]}`).replace(/\s+/g, '');
   
   // Fix image URL - ensure it uses frontend domain for proxied images
   const fixedImageUrl = imageUrl 
