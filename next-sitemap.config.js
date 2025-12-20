@@ -62,9 +62,9 @@ module.exports = {
         disallow: '/',
       },
     ],
-    // Point directly to WordPress sitemap - industry standard for headless WP
+    // Point to our Next.js generated sitemap with correct frontend URLs
     additionalSitemaps: [
-      'https://wp.cursedtours.com/sitemap_index.xml',
+      'https://cursedtours.com/sitemap.xml',
     ],
   },
 }
