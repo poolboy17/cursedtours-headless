@@ -96,20 +96,21 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 							{/* Glow effect behind image */}
 							<div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 blur-2xl" />
 							
-							{/* Responsive aspect ratios: shorter on mobile, taller on desktop */}
-							<div className="relative aspect-[16/9] sm:aspect-[3/2] lg:aspect-[4/3]">
-								<Image
-									src="/images/hero-ghost-tour.png"
-									alt="Ghost tour group walking through haunted dungeon with flashlights"
-									fill
-									className="object-cover"
-									sizes="(max-width: 768px) 100vw, 50vw"
-									priority={false}
-									loading="lazy"
-								/>
-								{/* Subtle overlay for better blending */}
-								<div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-purple-950/30" />
-							</div>
+							{/* Explicit dimensions for better LCP and CLS */}
+							<Image
+								src="/images/hero-ghost-tour.png"
+								alt="Ghost tour group walking through haunted dungeon with flashlights"
+								width={1536}
+								height={1024}
+								className="w-full h-auto object-cover rounded-xl md:rounded-2xl lg:rounded-3xl"
+								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"
+								priority={false}
+								loading="lazy"
+								decoding="async"
+								fetchPriority="low"
+							/>
+							{/* Subtle overlay for better blending */}
+							<div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-purple-950/30 rounded-xl md:rounded-2xl lg:rounded-3xl" />
 
 							{/* Decorative border */}
 							<div className="absolute inset-0 rounded-xl md:rounded-2xl lg:rounded-3xl border border-white/10" />
