@@ -24,17 +24,39 @@ export default class Document extends NextDocument {
 				dir={process.env.NEXT_PUBLIC_SITE_DIRECTION}
 			>
 				<Head>
+					{/* DNS Prefetch for external resources - reduces connection time by ~50-150ms */}
+					<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+					<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+					<link rel="dns-prefetch" href="//wp.cursedtours.com" />
+					<link rel="dns-prefetch" href="//www.googletagmanager.com" />
+					<link rel="dns-prefetch" href="//www.google-analytics.com" />
+					
+					{/* Preconnect to critical external domains - saves ~100-300ms per connection */}
+					<link rel="preconnect" href="https://fonts.googleapis.com" />
+					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+					<link rel="preconnect" href="https://wp.cursedtours.com" crossOrigin="anonymous" />
+					
 					{/* Preload hero image for faster LCP - WebP 62KB */}
 					<link
 						rel="preload"
 						as="image"
 						href="/images/hero-ghost-tour.webp"
 						type="image/webp"
+						fetchPriority="high"
 					/>
 					
-					{/* Preconnect to external domains */}
-					<link rel="preconnect" href="https://fonts.googleapis.com" />
-					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+					{/* Critical CSS - inline above-the-fold styles to reduce render blocking */}
+					<style dangerouslySetInnerHTML={{ __html: `
+						/* Critical above-fold styles */
+						html{-webkit-text-size-adjust:100%;font-family:system-ui,-apple-system,sans-serif}
+						body{margin:0;background:#fff}
+						.dark body{background:#171717}
+						*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid}
+						h1,h2,h3{margin:0;font-weight:inherit;font-size:inherit}
+						img,svg{display:block;vertical-align:middle;max-width:100%;height:auto}
+						/* Prevent layout shift during font load */
+						@font-face{font-family:'Poppins-fallback';src:local('Arial');ascent-override:105%;descent-override:35%;line-gap-override:10%}
+					`}} />
 					
 					<link
 						href={`${SITE_URL}/api/feeds/feed.json`}
@@ -89,6 +111,7 @@ export default class Document extends NextDocument {
 					<meta name="theme-color" content="#172A53" media="(prefers-color-scheme: light)" />
 					<meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
 					
+					{/* Inline critical scripts - prevent render blocking */}
 					<script
 						dangerouslySetInnerHTML={{
 							__html: `

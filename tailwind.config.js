@@ -16,16 +16,34 @@ function customColors(cssVar) {
 }
 
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  darkMode: "selector",
-  safelist: [
-    {
-      pattern: /grid-cols-(1|2|3|4|5)/,
-      pattern: /pb-(5|6|7|8|9|10)/,
-      pattern:
-        /bg-(green|blue|red|indigo|pink|rose|yellow)-(50|500|600|800|900|)/,
-    },
+  // Optimized content paths - be specific to reduce CSS output
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+    "./src/container/**/*.{js,ts,jsx,tsx}",
+    "./src/wp-templates/**/*.{js,ts,jsx,tsx}",
+    "./src/wp-blocks/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "selector",
+  
+  // Minimal safelist - only what's actually used dynamically
+  safelist: [
+    // Grid columns used in responsive layouts
+    'grid-cols-1',
+    'grid-cols-2', 
+    'grid-cols-3',
+    'grid-cols-4',
+    // Category/tag colors that come from WordPress
+    {
+      pattern: /bg-(green|blue|red|indigo|pink|rose|yellow|purple)-(50|500|600)/,
+    },
+    // Padding variations
+    'pb-5',
+    'pb-6',
+    'pb-8',
+    'pb-10',
+  ],
+  
   theme: {
     container: {
       center: true,
@@ -74,15 +92,13 @@ module.exports = {
           900: customColors("--c-neutral-900"),
         },
       },
-    },
-  },
-  variants: {
-    extend: {
       animation: {
         "spin-slow": "spin 3s linear infinite",
       },
     },
   },
+  
+  // Only include plugins that are actually used
   plugins: [
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
