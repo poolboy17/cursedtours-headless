@@ -96,7 +96,7 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 							{/* Glow effect behind image */}
 							<div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 blur-2xl" />
 							
-							{/* Explicit dimensions for better LCP and CLS */}
+							{/* Explicit dimensions for better CLS - lazy load since text is LCP */}
 							<Image
 								src="/images/hero-ghost-tour.png"
 								alt="Ghost tour group walking through haunted dungeon with flashlights"
@@ -104,8 +104,8 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 								height={1024}
 								className="w-full h-auto object-cover rounded-xl md:rounded-2xl lg:rounded-3xl"
 								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"
-								priority={true}
-								fetchPriority="high"
+								loading="lazy"
+								decoding="async"
 							/>
 							{/* Subtle overlay for better blending */}
 							<div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-purple-950/30 rounded-xl md:rounded-2xl lg:rounded-3xl" />
