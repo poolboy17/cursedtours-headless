@@ -1,5 +1,6 @@
 import '@/../faust.config'
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { FaustProvider } from '@faustwp/core'
@@ -10,10 +11,18 @@ import { WordPressBlocksProvider, fromThemeJson } from '@faustwp/blocks'
 import blocks from '@/wp-blocks'
 import { Poppins } from 'next/font/google'
 import SiteWrapperProvider from '@/container/SiteWrapperProvider'
-import { Toaster } from 'react-hot-toast'
-import NextNProgress from 'nextjs-progressbar'
 import themeJson from '@/../theme.json'
-import { GoogleAnalytics } from 'nextjs-google-analytics'
+
+// Lazy load non-critical components to reduce TBT
+const Toaster = dynamic(
+	() => import('react-hot-toast').then(mod => mod.Toaster),
+	{ ssr: false }
+)
+const NextNProgress = dynamic(() => import('nextjs-progressbar'), { ssr: false })
+const GoogleAnalytics = dynamic(
+	() => import('nextjs-google-analytics').then(mod => mod.GoogleAnalytics),
+	{ ssr: false }
+)
 
 // Reduced from 5 weights to 2 - saves ~60KB of font files
 const poppins = Poppins({

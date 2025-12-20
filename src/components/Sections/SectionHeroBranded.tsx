@@ -104,10 +104,8 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 								height={1024}
 								className="w-full h-auto object-cover rounded-xl md:rounded-2xl lg:rounded-3xl"
 								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"
-								priority={false}
-								loading="lazy"
-								decoding="async"
-								fetchPriority="low"
+								priority={true}
+								fetchPriority="high"
 							/>
 							{/* Subtle overlay for better blending */}
 							<div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-purple-950/30 rounded-xl md:rounded-2xl lg:rounded-3xl" />
