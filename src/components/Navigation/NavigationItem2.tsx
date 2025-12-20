@@ -12,7 +12,7 @@ import Link from 'next/link'
 import NcImage from '../NcImage/NcImage'
 import { useFragment } from '@/__generated__'
 import { NC_PRIMARY_MENU_QUERY_FRAGMENT } from '@/fragments/menu'
-import { NC_IMAGE_MEDIA_FRAGMENT } from '@/fragments'
+import { NC_IMAGE_MEDIA_FRAGMENT, NC_CATEGORY_CARD_FIELD_NOT_IMAGE_FRAGMENT } from '@/fragments'
 import ncFormatDate from '@/utils/formatDate'
 import { NavItemType, NavigationItemProps } from './NavigationItem'
 import { NcPrimaryMenuFieldsFragmentFragment } from '@/__generated__/graphql'
@@ -23,6 +23,7 @@ type MenuPost = NonNullable<NonNullable<NcPrimaryMenuFieldsFragmentFragment['ncm
 // Separate component for menu post card to properly use useFragment hook
 const MenuPostCard2: FC<{ post: MenuPost & { __typename: 'Post' } }> = ({ post }) => {
 	const featuredImage = useFragment(NC_IMAGE_MEDIA_FRAGMENT, post.featuredImage?.node)
+	const firstCategory = useFragment(NC_CATEGORY_CARD_FIELD_NOT_IMAGE_FRAGMENT, post.categories?.nodes?.[0])
 	
 	return (
 		<article
@@ -48,10 +49,10 @@ const MenuPostCard2: FC<{ post: MenuPost & { __typename: 'Post' } }> = ({ post }
 						{ncFormatDate(post.date || '')}
 					</time>
 					<Link
-						href={post.categories?.nodes?.[0]?.uri || ''}
+						href={firstCategory?.uri || ''}
 						className="relative z-10 rounded-full bg-neutral-50 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800/80"
 					>
-						{post.categories?.nodes?.[0]?.name || ''}
+						{firstCategory?.name || ''}
 					</Link>
 				</div>
 				<h4 className="mt-2 text-sm font-medium leading-6 text-neutral-900 dark:text-neutral-300">
