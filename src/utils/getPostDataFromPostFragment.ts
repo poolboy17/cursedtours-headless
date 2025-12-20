@@ -25,6 +25,22 @@ export type PostFormatNameType =
 	| 'status'
 	| 'standard'
 
+/**
+ * Extract the first image URL from HTML content
+ * Used as fallback when no featured image is set
+ */
+function extractFirstImageFromContent(content: string): string | null {
+	if (!content) return null
+	
+	// Match img src attribute (handles both single and double quotes)
+	const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i)
+	if (imgMatch && imgMatch[1]) {
+		return imgMatch[1]
+	}
+	
+	return null
+}
+
 export function getPostDataFromPostFragment(
 	post:
 		| FragmentType<typeof NC_POST_CARD_FRAGMENT>
@@ -46,10 +62,29 @@ export function getPostDataFromPostFragment(
 	).toLowerCase()
 	const postFormatsArr = query.postFormats?.nodes
 	//
-	const featuredImage = useFragment(
+	const featuredImageFromWP = useFragment(
 		NC_IMAGE_MEDIA_HAS_DETAIL_FRAGMENT,
 		query.featuredImage?.node,
 	)
+	
+	// Fallback: extract first image from content if no featured image
+	const contentImageUrl = !featuredImageFromWP?.sourceUrl 
+		? extractFirstImageFromContent(query.content || '')
+		: null
+	
+	// Create a fallback featured image object if we found an image in content
+	const featuredImage = featuredImageFromWP?.sourceUrl 
+		? featuredImageFromWP 
+		: contentImageUrl 
+			? { 
+				sourceUrl: contentImageUrl, 
+				altText: query.title || 'Post image',
+				// Minimal required fields for the fragment type
+				__typename: 'MediaItem' as const,
+				databaseId: 0,
+			} as NcmazFcImageHasDetailFieldsFragment
+			: featuredImageFromWP
+	
 	//
 	const ncPostMetaData = useFragment(
 		NC_POST_META_DATA_FULL_FRAGMENT,
