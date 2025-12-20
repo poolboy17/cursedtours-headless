@@ -3,7 +3,6 @@ import { FragmentType, useFragment } from '../__generated__'
 import {
 	NC_IMAGE_MEDIA_HAS_DETAIL_FRAGMENT,
 	NC_POST_CARD_FRAGMENT,
-	NC_POST_CARD_NOT_NCMAZGALLERY_FRAGMENT,
 	NC_POST_FULL_FRAGMENT,
 	NC_POST_META_DATA_FULL_FRAGMENT,
 } from '../fragments'
@@ -44,7 +43,7 @@ function extractFirstImageFromContent(content: string): string | null {
 export function getPostDataFromPostFragment(
 	post:
 		| FragmentType<typeof NC_POST_CARD_FRAGMENT>
-		| FragmentType<typeof NC_POST_CARD_NOT_NCMAZGALLERY_FRAGMENT>
+		| FragmentType<typeof NC_POST_FULL_FRAGMENT>
 		| FragmentTypePostFullFields
 		| TPostCard,
 ) {
