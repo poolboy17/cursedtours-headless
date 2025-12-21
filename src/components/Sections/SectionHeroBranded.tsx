@@ -5,6 +5,10 @@ import Image from 'next/image'
 import ButtonPrimary from '@/components/Button/ButtonPrimary'
 import ButtonSecondary from '@/components/Button/ButtonSecondary'
 
+// Base64 blur placeholder for hero image (dark purple/slate tones)
+// This shows instantly while the full image loads, improving perceived LCP
+const HERO_BLUR_PLACEHOLDER = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKABADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUH/8QAIxAAAgEDBAIDAQAAAAAAAAAAAQIDBAURAAYSITFBE1Fh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAwT/xAAcEQACAgIDAAAAAAAAAAAAAAABAgADBBESITH/2gAMAwEAAhEDEEA/ANHuG4rnb7hUU1Lb6aop4pGSKdpyjOoOAwGDjI9ajf3PuP8A0NF/Y/1T9xf5Vc/7yf8AZpWs4TqOlVcxMjk2YE+yT7J96n/Z'
+
 interface SectionHeroBrandedProps {
 	className?: string
 }
@@ -106,6 +110,8 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"
 								priority
 								fetchPriority="high"
+								placeholder="blur"
+								blurDataURL={HERO_BLUR_PLACEHOLDER}
 							/>
 							{/* Subtle overlay for better blending */}
 							<div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-purple-950/30 rounded-xl md:rounded-2xl lg:rounded-3xl" />
