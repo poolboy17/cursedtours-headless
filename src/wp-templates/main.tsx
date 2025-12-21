@@ -91,8 +91,8 @@ const Main: FaustTemplate<any> = (props: any) => {
 			)}
 
 			<div className="container pb-16 lg:pb-28">
-				{/* Featured Posts - Magazine Layout */}
-				<div className="mb-12 lg:mb-16">
+				{/* Featured Posts - Magazine Layout - min-height prevents CLS */}
+				<div className="mb-12 lg:mb-16 min-h-[400px] sm:min-h-[450px] lg:min-h-[500px]">
 					<Heading desc="Fresh stories from the other side">
 						Latest Hauntings
 					</Heading>
