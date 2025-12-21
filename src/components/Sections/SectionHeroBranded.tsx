@@ -22,7 +22,7 @@ interface SectionHeroBrandedProps {
 const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => {
 	return (
 		<section className={`nc-SectionHeroBranded relative overflow-hidden ${className}`}>
-			{/* Background */}
+			{/* Background - Static gradients only, no animations for better LCP */}
 			<div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950">
 				<div 
 					className="absolute inset-0 opacity-5"
@@ -31,8 +31,8 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 						backgroundSize: '40px 40px'
 					}}
 				/>
-				<div className="absolute top-20 left-10 w-64 h-64 bg-purple-500/20 rounded-full blur-[100px] animate-pulse" />
-				<div className="absolute bottom-20 right-1/3 w-96 h-96 bg-red-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+				<div className="absolute top-20 left-10 w-64 h-64 bg-purple-500/20 rounded-full blur-[100px]" />
+				<div className="absolute bottom-20 right-1/3 w-96 h-96 bg-red-500/10 rounded-full blur-[120px]" />
 			</div>
 
 			{/* Content */}
