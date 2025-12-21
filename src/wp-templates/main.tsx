@@ -11,13 +11,12 @@ import { useRouter } from 'next/router'
 import SectionHeroBranded from '@/components/Sections/SectionHeroBranded'
 import SectionMagazine1 from '@/components/Sections/SectionMagazine1'
 import SectionMagazine1Skeleton from '@/components/Sections/SectionMagazine1Skeleton'
-import SectionSliderNewCategories from '@/components/SectionSliderNewCategories/SectionSliderNewCategories'
 import Heading from '@/components/Heading/Heading'
 import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { WebsiteSchema, OrganizationSchema } from '@/components/StructuredData'
 import { TCategoryCardFull } from '@/components/CardCategory1/CardCategory1'
-import CardCategory1 from '@/components/CardCategory1/CardCategory1'
+import CategoryGridStatic from '@/components/CategoryGridStatic'
 
 // Constants
 const MAGAZINE_POST_COUNT = 4
@@ -81,26 +80,13 @@ const Main: FaustTemplate<any> = (props: any) => {
 			{/* Branded Hero Section - Full Width */}
 			<SectionHeroBranded className="-mt-2" />
 
-			{/* Categories Section */}
+			{/* Categories Section - STATIC GRID (CLS-safe, no slider) */}
 			{!categoriesLoading && categories.length > 0 && (
 				<div className="container py-12 lg:py-16">
 					<Heading desc="Browse our haunted content by topic">
 						Explore Categories
 					</Heading>
-					{/* Mobile: Simple 2-column grid - no swiping needed */}
-					<div className="grid grid-cols-2 gap-4 md:hidden">
-						{categories.map((cat, index) => (
-							<CardCategory1 key={index} term={cat} size="normal" />
-						))}
-					</div>
-					{/* Desktop: Slider with banner cards */}
-					<div className="hidden md:block">
-						<SectionSliderNewCategories
-							categories={categories}
-							categoryCardType="card5"
-							itemPerRow={4}
-						/>
-					</div>
+					<CategoryGridStatic categories={categories} />
 				</div>
 			)}
 
