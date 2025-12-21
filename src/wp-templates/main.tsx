@@ -37,15 +37,19 @@ const Main: FaustTemplate<any> = (props: any) => {
 		},
 	})
 
-	// Fetch top categories
+	// Fetch top categories (fetch extra to account for filtered Historical Hauntings)
 	const { data: categoriesData, loading: categoriesLoading } = useQuery(QUERY_GET_TOP_10_CATEGORIES, {
 		variables: {
-			first: 8,
+			first: 12,
 		},
 	})
 
 	const allPosts = (data?.posts?.nodes || []) as PostDataFragmentType[]
-	const categories = (categoriesData?.categories?.nodes || []) as TCategoryCardFull[]
+	// Filter out Historical Hauntings (junk drawer category ID 378) from homepage display
+	// Then limit to top 8 categories for display
+	const categories = ((categoriesData?.categories?.nodes || []) as TCategoryCardFull[])
+		.filter(cat => cat.databaseId !== 378)
+		.slice(0, 8)
 	
 	// Split posts for different sections
 	const magazinePosts = allPosts.slice(0, MAGAZINE_POST_COUNT)
