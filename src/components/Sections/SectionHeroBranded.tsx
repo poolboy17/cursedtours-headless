@@ -2,7 +2,6 @@
 
 import { FC } from 'react'
 import Image from 'next/image'
-import ButtonPrimary from '@/components/Button/ButtonPrimary'
 import ButtonSecondary from '@/components/Button/ButtonSecondary'
 
 // Base64 blur placeholder for hero image (dark purple/slate tones)
@@ -56,18 +55,8 @@ const SectionHeroBranded: FC<SectionHeroBrandedProps> = ({ className = '' }) => 
 							Discover spine-chilling ghost tours, haunted locations, and paranormal experiences in cities around the world.
 						</p>
 
-						{/* CTA Buttons */}
-						<div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 md:gap-4 mb-6 md:mb-10">
-							<ButtonPrimary 
-								href="/posts" 
-								sizeClass="px-5 py-3 sm:px-6 sm:py-3.5 md:px-8 md:py-4 text-sm sm:text-base md:text-lg"
-								className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 border-0 shadow-lg shadow-purple-500/25 w-full sm:w-auto"
-							>
-								<svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-								</svg>
-								Explore Ghost Tours
-							</ButtonPrimary>
+						{/* CTA Button */}
+						<div className="flex items-center justify-center md:justify-start mb-6 md:mb-10">
 							<ButtonSecondary 
 								href="/search/categories"
 								sizeClass="px-5 py-3 sm:px-6 sm:py-3.5 md:px-8 md:py-4 text-sm sm:text-base md:text-lg"
