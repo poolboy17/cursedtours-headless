@@ -17,6 +17,7 @@ import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { WebsiteSchema, OrganizationSchema } from '@/components/StructuredData'
 import { TCategoryCardFull } from '@/components/CardCategory1/CardCategory1'
+import CardCategory1 from '@/components/CardCategory1/CardCategory1'
 
 // Constants
 const MAGAZINE_POST_COUNT = 4
@@ -79,11 +80,20 @@ const Main: FaustTemplate<any> = (props: any) => {
 					<Heading desc="Browse our haunted content by topic">
 						Explore Categories
 					</Heading>
-					<SectionSliderNewCategories
-						categories={categories}
-						categoryCardType="card3"
-						itemPerRow={4}
-					/>
+					{/* Mobile: Simple 2-column grid - no swiping needed */}
+					<div className="grid grid-cols-2 gap-4 md:hidden">
+						{categories.map((cat, index) => (
+							<CardCategory1 key={index} term={cat} size="normal" />
+						))}
+					</div>
+					{/* Desktop: Slider with banner cards */}
+					<div className="hidden md:block">
+						<SectionSliderNewCategories
+							categories={categories}
+							categoryCardType="card5"
+							itemPerRow={4}
+						/>
+					</div>
 				</div>
 			)}
 

@@ -39,13 +39,13 @@ export default function MySlider<T>({
 			return setNumberOfitem(1)
 		}
 		if (windowWidth < 500) {
-			return setNumberOfitem(itemPerRow - 3 <= 1 ? 1.2 : itemPerRow - 3)
+			return setNumberOfitem(2.1)
 		}
 		if (windowWidth < 1024) {
-			return setNumberOfitem(itemPerRow - 2 <= 1 ? 1.2 : itemPerRow - 2)
+			return setNumberOfitem(itemPerRow - 2 <= 1 ? 2 : itemPerRow - 2)
 		}
 		if (windowWidth < 1280) {
-			return setNumberOfitem(itemPerRow - 1 <= 1 ? 1.2 : itemPerRow - 1)
+			return setNumberOfitem(itemPerRow - 1 <= 1 ? 2 : itemPerRow - 1)
 		}
 
 		setNumberOfitem(itemPerRow)
