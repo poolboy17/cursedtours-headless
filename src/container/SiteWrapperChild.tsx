@@ -7,7 +7,6 @@ import {
 } from '@/stores/viewer/viewerSlice'
 import { updateGeneralSettings } from '@/stores/general-settings/generalSettingsSlice'
 import ControlSettingsDemo from './ControlSettingsDemo'
-import CookiestBoxPopover from '@/components/CookiestBoxPopover'
 import { initLocalPostsSavedListFromLocalstored } from '@/stores/localPostSavedList/localPostsSavedListSlice'
 import { usePathname } from 'next/navigation'
 import { CMSUserMetaResponseData } from '@/pages/api/cms-user-meta/[id]'
@@ -117,7 +116,7 @@ export function SiteWrapperChild({
 
 	return (
 		<div>
-			<CookiestBoxPopover />
+			{/* Cookie banner removed - was causing CLS issues */}
 			<ControlSettingsDemo />
 		</div>
 	)
