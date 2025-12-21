@@ -45,10 +45,13 @@ const Main: FaustTemplate<any> = (props: any) => {
 	})
 
 	const allPosts = (data?.posts?.nodes || []) as PostDataFragmentType[]
-	// Filter out Historical Hauntings (junk drawer category ID 378) from homepage display
-	// Then limit to top 8 categories for display
+	// Filter categories for homepage display per §4 UI PROMOTION rules:
+	// 1. Exclude Historical Hauntings (junk drawer category ID 378)
+	// 2. Only show categories WITH images (no placeholders)
+	// 3. Limit to top 8 by post count
 	const categories = ((categoriesData?.categories?.nodes || []) as TCategoryCardFull[])
 		.filter(cat => cat.databaseId !== 378)
+		.filter(cat => cat.ncTaxonomyMeta?.featuredImage?.node?.sourceUrl)
 		.slice(0, 8)
 	
 	// Split posts for different sections
