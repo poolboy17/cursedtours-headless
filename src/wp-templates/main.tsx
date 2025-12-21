@@ -51,7 +51,7 @@ const Main: FaustTemplate<any> = (props: any) => {
 	// 3. Limit to top 8 by post count
 	const categories = ((categoriesData?.categories?.nodes || []) as TCategoryCardFull[])
 		.filter(cat => cat.databaseId !== 378)
-		.filter(cat => cat.ncTaxonomyMeta?.featuredImage?.node?.sourceUrl)
+		.filter(cat => !!cat.ncTaxonomyMeta?.featuredImage?.node)
 		.slice(0, 8)
 	
 	// Split posts for different sections
