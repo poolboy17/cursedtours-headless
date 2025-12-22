@@ -9,8 +9,18 @@ import dynamic from 'next/dynamic'
 import { HeaderSearchForm, SearchIconBtn } from './HeaderSearch'
 import { NC_SITE_SETTINGS } from '@/contains/site-settings'
 
+// Hamburger placeholder - matches MenuBar button dimensions exactly to prevent CLS
+const MenuBarPlaceholder = () => (
+	<button className="flex items-center justify-center rounded-lg p-2.5 text-neutral-700 dark:text-neutral-300">
+		<svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+			<path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+		</svg>
+	</button>
+)
+
 const DynamicMenuBar = dynamic(() => import('@/components/MenuBar/MenuBar'), {
 	ssr: false,
+	loading: () => <MenuBarPlaceholder />,
 })
 
 export interface MainNav2Props extends MainNav1Props {}
