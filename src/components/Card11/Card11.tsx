@@ -1,9 +1,9 @@
 'use client'
 
 import { FC, useState } from 'react'
-import PostCardSaveAction from '@/components/PostCardSaveAction/PostCardSaveAction'
+import PostCardSaveActionLazy from '@/components/PostCardSaveAction/PostCardSaveActionLazy'
 import CategoryBadgeList from '@/components/CategoryBadgeList/CategoryBadgeList'
-import PostCardLikeAndComment from '@/components/PostCardLikeAndComment/PostCardLikeAndComment'
+import PostCardLikeAndCommentLazy from '@/components/PostCardLikeAndComment/PostCardLikeAndCommentLazy'
 import PostCardMeta from '@/components/PostCardMeta/PostCardMeta'
 import PostFeaturedMedia from '@/components/PostFeaturedMedia/PostFeaturedMedia'
 import Link from 'next/link'
@@ -67,7 +67,7 @@ const Card11: FC<Card11Props> = ({
 					></span>
 				</h3>
 				<div className="mt-auto flex flex-wrap items-end justify-between gap-2.5">
-					<PostCardLikeAndComment
+					<PostCardLikeAndCommentLazy
 						commentCount={commentCount || 0}
 						linkToPost={uri || ''}
 						likeCount={ncPostMetaData?.likesCount || 0}
@@ -75,7 +75,7 @@ const Card11: FC<Card11Props> = ({
 						className="relative"
 						viewCount={ncPostMetaData?.viewsCount || 0}
 					/>
-					<PostCardSaveAction
+					<PostCardSaveActionLazy
 						readingTime={ncPostMetaData?.readingTime || 1}
 						postDatabseId={databaseId || 0}
 						className="relative"

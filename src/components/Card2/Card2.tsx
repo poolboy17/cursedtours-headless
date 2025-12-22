@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
-import PostCardSaveAction from '@/components/PostCardSaveAction/PostCardSaveAction'
-import PostCardLikeAndComment from '@/components/PostCardLikeAndComment/PostCardLikeAndComment'
+import PostCardSaveActionLazy from '@/components/PostCardSaveAction/PostCardSaveActionLazy'
+import PostCardLikeAndCommentLazy from '@/components/PostCardLikeAndComment/PostCardLikeAndCommentLazy'
 import CategoryBadgeList from '@/components/CategoryBadgeList/CategoryBadgeList'
 import Link from 'next/link'
 import PostCardMeta from '../PostCardMeta/PostCardMeta'
@@ -48,7 +48,12 @@ const Card2: FC<Card2Props> = ({
 			<Link href={uri || ''} className="absolute inset-0" />
 			<div className="relative block h-0 w-full flex-shrink-0 flex-grow pt-[75%] sm:pt-[55%]">
 				<div className="absolute inset-0 z-0 overflow-hidden rounded-3xl">
-					<PostFeaturedMedia post={post} isHover={isHover} />
+					<PostFeaturedMedia 
+						post={post} 
+						isHover={isHover} 
+						// Card2 large: ~50% viewport on desktop, full width on mobile
+						sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+					/>
 				</div>
 
 				<CategoryBadgeList
@@ -85,7 +90,7 @@ const Card2: FC<Card2Props> = ({
 				</div>
 				<div className="my-5 border-t border-neutral-200 dark:border-neutral-700"></div>
 				<div className="flex items-center justify-between">
-					<PostCardLikeAndComment
+					<PostCardLikeAndCommentLazy
 						className="relative"
 						commentCount={commentCount || 0}
 						linkToPost={uri || ''}
@@ -93,7 +98,7 @@ const Card2: FC<Card2Props> = ({
 						postDatabseId={databaseId || 0}
 						viewCount={ncPostMetaData?.viewsCount || 0}
 					/>
-					<PostCardSaveAction
+					<PostCardSaveActionLazy
 						className="relative"
 						readingTime={ncPostMetaData?.readingTime || 1}
 						postDatabseId={databaseId || 0}

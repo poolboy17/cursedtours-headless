@@ -2,10 +2,15 @@ import { FC } from 'react'
 import { FragmentType } from '@/__generated__'
 import { NC_PRIMARY_MENU_QUERY_FRAGMENT } from '@/fragments/menu'
 import { flatListToHierarchical } from '@faustwp/core'
-import NavigationItem2 from './NavigationItem2'
 import dynamic from 'next/dynamic'
 
-const DynamicNavigationItem = dynamic(() => import('./NavigationItem'))
+// Dynamically import both navigation items to defer HeadlessUI hydration
+const DynamicNavigationItem = dynamic(() => import('./NavigationItem'), {
+	ssr: false,
+})
+const DynamicNavigationItem2 = dynamic(() => import('./NavigationItem2'), {
+	ssr: false,
+})
 
 interface Props {
 	className?: string
@@ -34,7 +39,7 @@ const Navigation: FC<Props> = ({
 		<ul className={`nc-Navigation items-center ${className}`}>
 			{menus.map((item, i) =>
 				variation === 'nav2' ? (
-					<NavigationItem2 key={i} menuItem={item} />
+					<DynamicNavigationItem2 key={i} menuItem={item} />
 				) : (
 					<DynamicNavigationItem key={i} menuItem={item} />
 				),

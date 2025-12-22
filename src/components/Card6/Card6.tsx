@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import PostCardMeta from '@/components/PostCardMeta/PostCardMeta'
-import PostCardSaveAction from '@/components/PostCardSaveAction/PostCardSaveAction'
-import PostCardLikeAndComment from '@/components/PostCardLikeAndComment/PostCardLikeAndComment'
+import PostCardSaveActionLazy from '@/components/PostCardSaveAction/PostCardSaveActionLazy'
+import PostCardLikeAndCommentLazy from '@/components/PostCardLikeAndComment/PostCardLikeAndCommentLazy'
 import CategoryBadgeList from '@/components/CategoryBadgeList/CategoryBadgeList'
 import PostTypeFeaturedIcon from '@/components/PostTypeFeaturedIcon/PostTypeFeaturedIcon'
 import Link from 'next/link'
@@ -46,7 +46,7 @@ const Card6: FC<Card6Props> = ({ className = 'h-full', post }) => {
 					<PostCardMeta meta={{ author, date }} />
 				</div>
 				<div className="mt-auto flex flex-wrap items-center justify-between">
-					<PostCardLikeAndComment
+					<PostCardLikeAndCommentLazy
 						className="relative"
 						commentCount={commentCount || 0}
 						linkToPost={uri || ''}
@@ -54,7 +54,7 @@ const Card6: FC<Card6Props> = ({ className = 'h-full', post }) => {
 						postDatabseId={databaseId || 0}
 						viewCount={ncPostMetaData?.viewsCount || 0}
 					/>
-					<PostCardSaveAction
+					<PostCardSaveActionLazy
 						className="relative"
 						readingTime={ncPostMetaData?.readingTime || 1}
 						postDatabseId={databaseId || 0}
@@ -67,7 +67,7 @@ const Card6: FC<Card6Props> = ({ className = 'h-full', post }) => {
 				className={`relative z-0 ms-3 block max-h-28 w-24 flex-shrink-0 overflow-hidden rounded-2xl sm:ms-5 sm:max-h-full sm:w-40`}
 			>
 				<MyImage
-					sizes="(max-width: 600px) 180px, 400px"
+					sizes="(max-width: 640px) 96px, 160px"
 					className="h-full w-full object-cover"
 					fill
 					src={featuredImage?.sourceUrl || ''}

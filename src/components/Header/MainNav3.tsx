@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import AvatarDropdown from './AvatarDropdown'
+import AvatarDropdownLazy from './AvatarDropdownLazy'
 import SwitchDarkMode from '../SwitchDarkMode/SwitchDarkMode'
 import Navigation from '../Navigation/Navigation'
 import { MainNav1Props } from './MainNav1'
@@ -53,7 +53,7 @@ const MainNav2: FC<MainNav2Props> = ({ menuItems, description, title }) => {
 							<SwitchDarkMode className="hidden self-center md:flex" />
 						)}
 						<SearchIconBtn className="lg:hidden" />
-						<AvatarDropdown className="self-center" />
+						<AvatarDropdownLazy className="self-center" />
 					</div>
 				</div>
 			</div>
