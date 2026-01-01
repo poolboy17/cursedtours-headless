@@ -23,6 +23,7 @@ interface Props {
   modifiedTime?: string | null;
   author?: string | null;
   section?: string | null;
+  noindex?: boolean;
 }
 
 const SITE_NAME = 'Cursed Tours';
@@ -40,6 +41,7 @@ const PageLayout: FC<Props> = ({
   modifiedTime,
   author,
   section,
+  noindex = false,
 }) => {
   // Build proper title - handle homepage specially
   const isHomepage = !pageTitle || pageTitle === 'Home';
@@ -58,6 +60,7 @@ const PageLayout: FC<Props> = ({
         modifiedTime={modifiedTime}
         author={author}
         section={section}
+        noindex={noindex}
       />
 
       <SiteHeader
