@@ -15,6 +15,7 @@ interface Props {
   modifiedTime?: string | null;
   author?: string | null;
   section?: string | null;
+  noindex?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ export default function SEO({
   modifiedTime,
   author,
   section,
+  noindex = false,
 }: Props) {
   const router = useRouter();
   
@@ -53,6 +55,11 @@ export default function SEO({
       <Head>
         {/* Basic Meta */}
         <title>{cleanTitle}</title>
+        
+        {/* Robots directive */}
+        {noindex && (
+          <meta name="robots" content="noindex, follow" />
+        )}
         <meta name="title" content={cleanTitle} />
         {descriptionNoHtmlTags && (
           <meta name="description" content={descriptionNoHtmlTags} />
