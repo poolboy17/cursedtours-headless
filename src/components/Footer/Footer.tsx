@@ -15,6 +15,25 @@ export type FooterNavItemType = NcFooterMenuFieldsFragmentFragment & {
 	children?: FooterNavItemType[]
 }
 
+/**
+ * Sanitize WordPress menu URIs to clean Next.js paths
+ * Converts URLs like /?page_id=8 to /
+ */
+function sanitizeUri(uri: string | null | undefined): string {
+	if (!uri) return '/'
+	
+	// Handle WordPress-style home page URLs
+	if (uri === '/?page_id=8' || uri === '/?page_id=8/' || uri.match(/^\/\?page_id=\d+$/)) {
+		return '/'
+	}
+	
+	// Remove any trailing query strings from WordPress
+	const cleanUri = uri.split('?')[0]
+	
+	// Ensure it starts with /
+	return cleanUri.startsWith('/') ? cleanUri : `/${cleanUri}`
+}
+
 export default function Footer({ menuItems }: Props) {
 	const menus = flatListToHierarchical(menuItems || [], {
 		idKey: 'id',
@@ -26,7 +45,7 @@ export default function Footer({ menuItems }: Props) {
 		return (
 			<div key={index + item.id}>
 				<h3 className="text-sm font-semibold leading-6 text-neutral-900 dark:text-neutral-200">
-					<Link href={item.uri ?? '/'} target={item.target ?? '_self'}>
+					<Link href={sanitizeUri(item.uri)} target={item.target ?? '_self'}>
 						{item.label}
 					</Link>
 				</h3>
@@ -34,7 +53,7 @@ export default function Footer({ menuItems }: Props) {
 					{item.children?.map((j, id) => (
 						<li key={j.id + id}>
 							<Link
-								href={j.uri ?? ''}
+								href={sanitizeUri(j.uri)}
 								className="text-sm leading-6 text-gray-600 hover:text-gray-900 dark:text-neutral-400 dark:hover:text-neutral-100"
 							>
 								{j.label}
