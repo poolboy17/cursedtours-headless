@@ -42,6 +42,7 @@ const Tag: FaustTemplate<PageTagGetTagQuery> = (props) => {
         generalSettings={
           props.data?.generalSettings as NcgeneralSettingsFieldsFragmentFragment
         }
+        noindex={true}
       >
         <ArchiveLayout
           name={name}
